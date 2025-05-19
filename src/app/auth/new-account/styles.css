@@ -1,0 +1,57 @@
+.glassmorphism-panel {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  border: 1.5px solid rgba(255, 192, 203, 0.35); /* rosa suave */
+  box-shadow: 0 8px 48px rgba(244, 114, 182, 0.25);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: box-shadow 0.3s ease;
+}
+
+.glassmorphism-panel:hover {
+  box-shadow: 0 12px 64px rgba(244, 114, 182, 0.4);
+}
+
+.glassmorphism-input.p-inputtext,
+.glassmorphism-input.p-password {
+  background: rgba(255, 255, 255, 0.18) !important;
+  border: 2px solid rgba(244, 114, 182, 0.6) !important;
+  color: #f3077d !important;
+  font-weight: 600;
+  padding: 1rem 1.25rem !important;
+  border-radius: 1.25rem !important;
+  box-shadow: 0 6px 24px rgba(244, 114, 182, 0.15);
+  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glassmorphism-input.p-inputtext::placeholder,
+.glassmorphism-input.p-password::placeholder {
+  color: #ec4899 !important;
+}
+
+.glassmorphism-input.p-inputtext:focus,
+.glassmorphism-input.p-password:focus {
+  background: rgba(255, 255, 255, 0.35) !important;
+  border-color: #ec4899 !important; /* pink-500 */
+  outline: none;
+  box-shadow: 0 0 12px 3px rgba(236, 72, 153, 0.6);
+  color: #f3077d !important;
+}
+
+/* Botón rosa personalizado */
+.p-button-pink {
+  background-color: #ec4899 !important; /* pink-500 */
+  border: none !important;
+  font-weight: 700 !important;
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.3);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.p-button-pink:hover {
+  background-color: #db2777 !important; /* pink-600 */
+  box-shadow: 0 8px 28px rgba(219, 39, 119, 0.5);
+}
+
+.p-button-rounded {
+  border-radius: 1.5rem !important;
+}

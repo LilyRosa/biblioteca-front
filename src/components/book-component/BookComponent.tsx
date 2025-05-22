@@ -4,18 +4,13 @@ import { Button } from "primereact/button";
 export const BookComponent = ({ onEdit, onDelete, onDetails, onFavorite }) => {
   return (
     <>
-      <div
-        className="book-component flex flex-col items-center p-2 border-round surface-card shadow-2"
-        style={{ width: "150px" }}
-      >
+      <div className="book-component flex flex-col items-center p-2 border-round surface-card shadow-2 max-w-44">
         {/* Imagen del libro */}
         <img
           src="/images/foto_tigre.png"
           alt="Portada del libro"
-          className="book-image mb-3"
+          className="book-image mb-3 h-32"
           style={{
-            width: "100%",
-            height: "150px",
             objectFit: "cover",
             borderRadius: "6px",
             display: "block",

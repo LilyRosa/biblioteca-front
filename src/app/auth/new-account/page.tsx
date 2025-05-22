@@ -1,20 +1,46 @@
 "use client";
 
 import { InputText } from "primereact/inputtext";
-import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import Link from "next/link";
 import { useState } from "react";
 import "./styles.css";
+import { register } from "@/api/auth/service/auth.service";
 
 export default function NewAccount() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const handleRegister = async () => {
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      await register({
+        username,
+        email,
+        password,
+      });
+      setSuccess("¡Cuenta creada con éxito!");
+      setUsername("");
+      setEmail("");
+      setPassword("");
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message ||
+          "Error al crear la cuenta. Intenta de nuevo."
+      );
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-100 via-pink-50 to-pink-100 px-4">
-      <div className="glassmorphism-panel w-full p-8 rounded-3xl shadow-lg border border-pink-300">
+      <div className="glassmorphism-panel max-w-md w-full p-10 rounded-3xl border border-white/30 shadow-lg backdrop-blur-md">
         <h1 className="text-4xl mb-8 text-pink-600 font-bold text-center">
           Nueva Cuenta
         </h1>
@@ -52,29 +78,38 @@ export default function NewAccount() {
           <div className="flex flex-col">
             <label
               htmlFor="password"
-              className="mb-2 text-pink-700 font-semibold"
+              className="mb-2 font-semibold text-pink-700"
             >
               Contraseña
             </label>
-            <Password
+            <InputText
               id="password"
+              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              feedback={false}
-              placeholder="Tu contraseña"
-              toggleMask
               className="glassmorphism-input"
+              placeholder="Ingresa tu contraseña"
+              required
             />
           </div>
 
           <Button
-            label="Crear Cuenta"
+            label={loading ? "Creando..." : "Crear Cuenta"}
             className="p-button-rounded p-button-pink w-full"
-            onClick={() => {
-              // Aquí la lógica para crear cuenta
-              alert("Cuenta creada con éxito!");
-            }}
+            onClick={handleRegister}
+            disabled={loading}
           />
+
+          {error && (
+            <div className="text-red-600 text-center font-semibold">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="text-green-600 text-center font-semibold">
+              {success}
+            </div>
+          )}
 
           <div className="flex items-center my-6 text-pink-600 font-semibold">
             <div className="flex-1 border-t border-pink-300"></div>
@@ -84,7 +119,7 @@ export default function NewAccount() {
 
           <Link href="/main-frame">
             <Button
-              type="submit"
+              type="button"
               label="Ingresar"
               className="p-button-rounded p-button-pink w-full"
             />

@@ -5,14 +5,28 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import Link from "next/link";
 import "./styles.css";
+import { login } from "@/api/auth/service/auth.service";
+import { decodeJWT, setToken } from "@/api/common/utils/jwt";
 
 export default function Login() {
   const [user, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  async function doLogin() {
+    try {
+      const data = await login({ username: user, password: password });
+      console.log(data);
+      console.log(decodeJWT(data.accessToken));
+      setToken(data.accessToken);
+      window.location.href = "/main-frame";
+    } catch (error) {
+      window.alert(error);
+    }
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Lógica de login aquí
+    doLogin();
   };
 
   return (
@@ -53,13 +67,11 @@ export default function Login() {
               required
             />
           </div>
-          <Link href="/main-frame">
-            <Button
-              type="submit"
-              label="Ingresar"
-              className="p-button-rounded p-button-pink w-full"
-            />
-          </Link>
+          <Button
+            type="submit"
+            label="Ingresar"
+            className="p-button-rounded p-button-pink w-full"
+          />
         </form>
         <div className="flex items-center my-8">
           <div className="flex-1 border-t border-pink-600"></div>

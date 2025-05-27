@@ -3,7 +3,6 @@
 import React, { useRef, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import "./styles.css";
-
 import { BookComponent } from "../book-component/BookComponent";
 import { BookModal } from "./BookModal";
 import { BookModalDetails } from "../book-panel-admin/BookModalDetails";

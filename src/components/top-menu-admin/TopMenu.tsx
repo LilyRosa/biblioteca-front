@@ -13,6 +13,7 @@ export const TopMenu = () => {
             icon={<IoBookOutline className="w-6 h-6" />}
             className="p-button-rounded p-button-text glassmorphism-btn"
             aria-label="Agregar libro"
+            tooltip="Libros"
           />
         </Link>
         <Link href="/admin/add-genre" passHref>
@@ -20,6 +21,7 @@ export const TopMenu = () => {
             icon={<IoPricetagOutline className="w-6 h-6" />}
             className="p-button-rounded p-button-text glassmorphism-btn"
             aria-label="Agregar género"
+            tooltip="Géneros"
           />
         </Link>
       </nav>

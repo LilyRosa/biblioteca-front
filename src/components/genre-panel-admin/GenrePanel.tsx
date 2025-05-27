@@ -1,5 +1,5 @@
 // import React from "react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -12,6 +12,7 @@ import { Tag } from "primereact/tag";
 import { GenreModal } from "./GenreModal";
 import "./styles.css";
 import { DeletePopup } from "../delete-popup-genre/DeletePopup";
+import { deleteGenre, getAllGenre } from "@/api/genres/service/genre.service";
 
 export const GenrePanel = () => {
   const [globalFilterValue, setGlobalFilterValue] = React.useState("");
@@ -23,6 +24,37 @@ export const GenrePanel = () => {
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [popup, setPopup] = useState(false);
   const [popupTarget, setPopupTarget] = useState(null);
+  const [genres, setGenres] = useState([]);
+
+  useEffect(() => {
+    const loadGenres = async () => {
+      setLoading(true);
+      try {
+        const data = await getAllGenre();
+        setGenres(data);
+      } catch (error) {
+        console.error("Error al cargar los géneros:", error);
+        // Aquí podrías mostrar un mensaje de error al usuario
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadGenres();
+  }, []); // El array vacío asegura que esto se ejecute solo una vez al montar el componente
+
+  const loadGenres = async () => {
+    setLoading(true);
+    try {
+      const data = await getAllGenre();
+      setGenres(data);
+    } catch (error) {
+      console.error("Error al cargar los géneros:", error);
+      // Aquí podrías mostrar un mensaje de error al usuario
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toast = useRef(null);
 
@@ -32,9 +64,20 @@ export const GenrePanel = () => {
     setSelectedGenre(genre);
   };
 
-  const handleAcceptDelete = () => {
-    // Aquí la lógica para eliminar el libro seleccionado
-    setPopup(false);
+  const handleAcceptDelete = async () => {
+    if (!selectedGenre) return;
+    setLoading(true);
+    try {
+      console.log(selectedGenre);
+      await deleteGenre(selectedGenre.id_genre); // Usa el id del género seleccionado
+      setPopup(false);
+      await loadGenres(); // Recarga la lista de géneros
+    } catch (error) {
+      console.error("Error al eliminar el género:", error);
+      // Aquí puedes mostrar un toast o alerta de error si quieres
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleRejectDelete = () => {
@@ -150,7 +193,7 @@ export const GenrePanel = () => {
     return (
       <div
         className="flex gap-2 justify-content-center"
-        key={new Date().getUTCDate().toString()}
+        key={rowData.id_genre} // Usar el ID del género como key
       >
         <Button
           icon="pi pi-pencil"
@@ -158,7 +201,8 @@ export const GenrePanel = () => {
           outlined
           severity="info"
           aria-label="Editar"
-          onClick={() => showEdit(rowData)}
+          onClick={() => showEdit(rowData)} // Pasa el objeto género completo
+          tooltip="Editar"
         />
         <Button
           icon="pi pi-trash"
@@ -166,7 +210,8 @@ export const GenrePanel = () => {
           outlined
           severity="danger"
           aria-label="Eliminar"
-          onClick={(e) => showPopup(e, rowData)}
+          onClick={(e) => showPopup(e, rowData)} // Pasa el objeto género completo
+          tooltip="Eliminar"
         />
       </div>
     );
@@ -232,28 +277,25 @@ export const GenrePanel = () => {
     <section className="glassmorphism-panel p-6 rounded-3xl shadow-lg max-w-5xl mx-auto">
       <div className="glassmorphism-content border border-pink-300 rounded-xl p-6 text-center text-pink-600 font-semibold shadow-sm">
         <DataTable
-          value={[
-            { name: "Pepito", country: { name: "Cuba" }, status: "misterio" },
-          ]}
+          value={genres} // Aquí usamos la lista de géneros
           paginator
           showGridlines
           rows={10}
           loading={loading}
-          dataKey="name"
+          dataKey="genre" // Asumiendo que tu género tiene un campo "id" único
           filters={filters}
-          globalFilterFields={["theme", "author", "genre"]}
+          globalFilterFields={["genre"]} // Ajusta los campos por los que quieres filtrar
           header={header}
-          emptyMessage="No fueron encontrados libros."
+          emptyMessage="No fueron encontrados géneros."
           onFilter={(e) => setFilters(e.filters)}
         >
           <Column
-            field="genre"
+            field="genre" // Asumiendo que tu género tiene un campo "name"
             header="Género"
             filter
             filterPlaceholder="Filtrar por género"
             style={{ minWidth: "12rem" }}
           />
-
           <Column
             header="Acciones"
             body={actionBodyTemplate}
@@ -267,7 +309,8 @@ export const GenrePanel = () => {
         dialogMode={typeModal}
         onClose={() => setShowModal(false)}
         show={showModal}
-        book={selectedGenre}
+        genre={selectedGenre}
+        onGenreSaved={loadGenres} // Pasa la función para recargar los géneros
       />
       <DeletePopup
         visible={popup}

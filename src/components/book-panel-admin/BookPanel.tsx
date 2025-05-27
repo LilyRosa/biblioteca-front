@@ -1,5 +1,5 @@
 // import React from "react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -13,18 +13,58 @@ import { BookModal } from "./BookModal";
 import "./styles.css";
 import { DeletePopup } from "../delete-popup-book/DeletePopup";
 import { BookModalDetails } from "./BookModalDetails";
+import {
+  addBook,
+  deleteBook,
+  getAllBook,
+  updateBook,
+} from "@/api/books/service/book.service";
+import { getAllGenre } from "../../api/genres/service/genre.service";
+import CreateBookInputDto from "../../api/books/interface/input/create-book.input.dto";
+import UpdateBookInputDto from "../../api/books/interface/input/update-book.input.dto";
 
 export const BookPanel = () => {
   const [globalFilterValue, setGlobalFilterValue] = React.useState("");
   const [filters, setFilters] = useState(null);
   const [loading, setLoading] = useState(false);
-  const statuses = ["misterio", "suspenso", "drama", "terror", "romance"];
+  const genres = ["misterio", "suspenso", "drama", "terror", "romance"];
   const [showModal, setShowModal] = useState(false);
   const [showModalDetails, setShowModalDetails] = useState(false);
   const [typeModal, setTypeModal] = useState("create");
   const [selectedBook, setSelectedBook] = useState(null);
   const [popup, setPopup] = useState(false);
   const [popupTarget, setPopupTarget] = useState(null);
+  const [books, setBooks] = useState([]);
+
+  useEffect(() => {
+    const loadBooks = async () => {
+      setLoading(true);
+      try {
+        const data = await getAllBook();
+        // Si tu backend retorna { books: [...] } usa setBooks(data.books)
+        setBooks(data);
+      } catch (error) {
+        console.error("Error al cargar los libros:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadBooks();
+  }, []);
+
+  const loadBooks = async () => {
+    setLoading(true);
+    try {
+      const data = await getAllBook();
+      // Si tu backend retorna { books: [...] } usa setBooks(data.books)
+      setBooks(data);
+    } catch (error) {
+      console.error("Error al cargar los libros:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toast = useRef(null);
 
@@ -34,13 +74,44 @@ export const BookPanel = () => {
     setSelectedBook(book);
   };
 
-  const handleAcceptDelete = () => {
-    // Aquí la lógica para eliminar el libro seleccionado
-    setPopup(false);
+  const handleAcceptDelete = async () => {
+    if (!selectedBook) return;
+    setLoading(true);
+    try {
+      console.log("ID a eliminar:", selectedBook.id_book);
+      await deleteBook(selectedBook.id_book);
+      setPopup(false);
+      await loadBooks();
+    } catch (error) {
+      console.error("Error al eliminar el género:", error);
+      // Aquí puedes mostrar un toast o alerta de error si quieres
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleRejectDelete = () => {
     setPopup(false);
+  };
+
+  const saveBook = async (bookData) => {
+    try {
+      if (typeModal === "create") {
+        const newBook = await addBook(bookData);
+        setBooks([...books, newBook]);
+      } else if (typeModal === "edit") {
+        const { id, ...rest } = bookData;
+        const updatedBook = await updateBook(rest, id);
+        setLoading(true);
+        getAllBook().then((x) => {
+          setBooks(x);
+          setLoading(false);
+        });
+      }
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error guardando libro:", error);
+    }
   };
 
   const getSeverity = (status) => {
@@ -133,10 +204,18 @@ export const BookPanel = () => {
     );
   };
 
-  const countryBodyTemplate = (rowData) => {
+  const themeBodyTemplate = (rowData) => {
     return (
       <div className="flex align-items-center gap-2">
-        <span>{rowData.country.name}</span>
+        <span>{rowData.theme}</span>
+      </div>
+    );
+  };
+
+  const authorBodyTemplate = (rowData) => {
+    return (
+      <div className="flex align-items-center gap-2">
+        <span>{rowData.author}</span>
       </div>
     );
   };
@@ -176,6 +255,7 @@ export const BookPanel = () => {
           severity="info"
           aria-label="Editar"
           onClick={() => showEdit(rowData)}
+          tooltip="Editar"
         />
         <Button
           icon="pi pi-trash"
@@ -184,6 +264,7 @@ export const BookPanel = () => {
           severity="danger"
           aria-label="Eliminar"
           onClick={(e) => showPopup(e, rowData)}
+          tooltip="Eliminar"
         />
         <Button
           icon="pi pi-eye"
@@ -192,6 +273,7 @@ export const BookPanel = () => {
           severity="success"
           aria-label="Detalles"
           onClick={() => showDetails(rowData)}
+          tooltip="Ver detalles"
         />
       </div>
     );
@@ -222,9 +304,9 @@ export const BookPanel = () => {
     return (
       <Dropdown
         value={options.value}
-        options={statuses}
+        options={genres}
         onChange={(e) => options.filterCallback(e.value, options.index)}
-        itemTemplate={statusItemTemplate}
+        itemTemplate={genreItemTemplate}
         placeholder="Select One"
         className="p-column-filter"
         showClear
@@ -232,13 +314,15 @@ export const BookPanel = () => {
     );
   };
 
-  const statusItemTemplate = (option) => {
+  const genreItemTemplate = (option) => {
     return <Tag value={option} severity={getSeverity(option)} />;
   };
 
-  const statusBodyTemplate = (rowData) => {
+  const genreBodyTemplate = (rowData) => {
     return (
-      <Tag value={rowData.status} severity={getSeverity(rowData.status)} />
+      <div className="flex align-items-center gap-2">
+        <span>{rowData.genre.genre}</span>
+      </div>
     );
   };
 
@@ -246,9 +330,9 @@ export const BookPanel = () => {
     return (
       <Dropdown
         value={options.value}
-        options={statuses}
+        options={genres}
         onChange={(e) => options.filterApplyCallback(e.value)}
-        itemTemplate={statusItemTemplate}
+        itemTemplate={genreItemTemplate}
         placeholder="Select One"
         className="p-column-filter"
         showClear
@@ -262,19 +346,14 @@ export const BookPanel = () => {
     <section className="glassmorphism-panel p-6 rounded-3xl shadow-lg max-w-5xl mx-auto">
       <div className="glassmorphism-content border border-pink-300 rounded-xl p-6 text-center text-pink-600 font-semibold shadow-sm">
         <DataTable
-          value={[
-            { name: "Pepito", country: { name: "Cuba" }, status: "misterio" },
-          ]}
+          value={books}
           paginator
           showGridlines
           rows={10}
           loading={loading}
-          dataKey="name"
-          filters={filters}
-          globalFilterFields={["theme", "author", "genre"]}
+          dataKey="theme" // Usa el campo único de cada libro, normalmente "id"
+          emptyMessage="No se encontraron libros."
           header={header}
-          emptyMessage="No fueron encontrados libros."
-          onFilter={(e) => setFilters(e.filters)}
         >
           <Column
             field="theme"
@@ -282,13 +361,14 @@ export const BookPanel = () => {
             filter
             filterPlaceholder="Filtrar por título"
             style={{ minWidth: "12rem" }}
+            body={themeBodyTemplate}
           />
           <Column
             field="author"
             header="Autor"
             filterField="country.name"
             style={{ minWidth: "12rem" }}
-            body={countryBodyTemplate}
+            body={authorBodyTemplate}
             filter
             filterPlaceholder="Filtrar por autor"
             filterClear={filterClearTemplate}
@@ -302,7 +382,7 @@ export const BookPanel = () => {
             showFilterMenu={true}
             filterMenuStyle={{ width: "14rem" }}
             style={{ minWidth: "12rem" }}
-            body={statusBodyTemplate}
+            body={genreBodyTemplate}
             filter
             filterElement={statusFilterTemplate}
           />
@@ -320,6 +400,7 @@ export const BookPanel = () => {
         onClose={() => setShowModal(false)}
         show={showModal}
         book={selectedBook}
+        onSave={saveBook}
       />
 
       <BookModalDetails

@@ -34,6 +34,7 @@ export const BookComponent = ({ onEdit, onDelete, onDetails, onFavorite }) => {
             onClick={onEdit}
             size="small"
             style={{ width: "100%" }}
+            tooltip="Editar"
           />
           <Button
             icon="pi pi-trash"
@@ -44,6 +45,7 @@ export const BookComponent = ({ onEdit, onDelete, onDetails, onFavorite }) => {
             onClick={onDelete}
             size="small"
             style={{ width: "100%" }}
+            tooltip="Eliminar"
           />
           <Button
             icon="pi pi-eye"
@@ -54,6 +56,7 @@ export const BookComponent = ({ onEdit, onDelete, onDetails, onFavorite }) => {
             onClick={onDetails}
             size="small"
             style={{ width: "100%" }}
+            tooltip="Ver detalles"
           />
           <Button
             icon="pi pi-heart"
@@ -64,6 +67,7 @@ export const BookComponent = ({ onEdit, onDelete, onDetails, onFavorite }) => {
             onClick={onFavorite}
             size="small"
             style={{ width: "100%" }}
+            tooltip="Añadir a favoritos"
           />
         </div>
       </div>

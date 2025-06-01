@@ -1,14 +1,20 @@
 import React from "react";
 import { Button } from "primereact/button";
 
-export const BookComponent = ({ onEdit, onDelete, onDetails, onFavorite }) => {
+export const BookComponent = ({
+  onEdit,
+  onDelete,
+  onDetails,
+  onFavorite,
+  book,
+}) => {
   return (
     <>
       <div className="book-component flex flex-col items-center p-2 border-round surface-card shadow-2 max-w-44">
         {/* Imagen del libro */}
         <img
-          src="/images/foto_tigre.png"
-          alt="Portada del libro"
+          src={book.poster || "/images/foto_tigre.png"} // fallback si no hay poster
+          alt={`Portada del libro ${book.theme}`}
           className="book-image mb-3 h-32"
           style={{
             objectFit: "cover",
@@ -59,7 +65,7 @@ export const BookComponent = ({ onEdit, onDelete, onDetails, onFavorite }) => {
             tooltip="Ver detalles"
           />
           <Button
-            icon="pi pi-heart"
+            icon={book.favorite ? "pi pi-heart-fill" : "pi pi-heart"}
             rounded
             outlined
             severity="success"
@@ -67,7 +73,9 @@ export const BookComponent = ({ onEdit, onDelete, onDetails, onFavorite }) => {
             onClick={onFavorite}
             size="small"
             style={{ width: "100%" }}
-            tooltip="Añadir a favoritos"
+            tooltip={
+              book.favorite ? "Quitar de favoritos" : "Añadir a favoritos"
+            }
           />
         </div>
       </div>

@@ -9,10 +9,12 @@ import { BookModalDetails } from "../book-panel-admin/BookModalDetails";
 import { DeletePopup } from "../delete-popup-book/DeletePopup";
 import {
   getAllBooksUser,
+  getAllFavoriteBooksUser,
+  getAllSuggestedBooksUser,
   toggleFavoriteBook,
 } from "@/api/users/service/user.service";
 
-export const BookPanel = () => {
+export const SuggestedBookPanel = () => {
   const [titleFilter, setTitleFilter] = useState("");
   const [authorFilter, setAuthorFilter] = useState("");
   const [genreFilter, setGenreFilter] = useState("");
@@ -24,7 +26,7 @@ export const BookPanel = () => {
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
-    getAllBooksUser()
+    getAllSuggestedBooksUser()
       .then((data) => {
         setBooks(data.books || []);
       })

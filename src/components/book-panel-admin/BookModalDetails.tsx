@@ -1,54 +1,54 @@
-import React, { useState } from "react";
+import React from "react";
 import ModalFrame from "../modal-frame/ModalFrame";
-import { InputText } from "primereact/inputtext";
 
 export const BookModalDetails = ({ show, onClose, book }) => {
-  const [genre, setGenre] = useState("");
-  const [theme, setTheme] = useState("");
-  const [author, setAuthor] = useState("");
-  const [resume, setResume] = useState("");
+  // book debe tener las propiedades: title, author, genre, resume
 
   const body = (
     <div className="flex flex-col gap-y-4">
-      {[
-        { label: "Título", value: theme, setter: setTheme },
-        { label: "Autor", value: author, setter: setAuthor },
-        { label: "Género", value: genre, setter: setGenre },
-      ].map(({ label, value, setter }) => (
-        <div key={label} className="flex items-center gap-4">
-          <label
-            htmlFor={label.toLowerCase()}
-            className="font-semibold text-pink-600/90 w-24"
-          >
-            {label}
-          </label>
-
-          <InputText
-            id={label.toLowerCase()}
-            type="text"
-            value={value}
-            onChange={(e) => setter(e.target.value)}
-            className="glassmorphism-input"
-            required
-            style={{ flex: 1 }}
-          />
-        </div>
-      ))}
-      <label htmlFor="" className="font-semibold text-pink-600/90 w-24">
-        Sinopsis
-      </label>
-      <InputText
-        type="text"
-        className="glassmorphism-input"
-        required
-        style={{ flex: 1 }}
-      />
+      {/* Título */}
+      <div className="flex items-center gap-4">
+        <label className="font-semibold text-pink-600/90 w-24">Título</label>
+        <label
+          className="glassmorphism-input bg-gray-100 text-gray-700 p-2 rounded"
+          style={{ flex: 1 }}
+        >
+          {book?.theme || ""}
+        </label>
+      </div>
+      {/* Autor */}
+      <div className="flex items-center gap-4">
+        <label className="font-semibold text-pink-600/90 w-24">Autor</label>
+        <label
+          className="glassmorphism-input bg-gray-100 text-gray-700 p-2 rounded"
+          style={{ flex: 1 }}
+        >
+          {book?.author || ""}
+        </label>
+      </div>
+      {/* Género */}
+      <div className="flex items-center gap-4">
+        <label className="font-semibold text-pink-600/90 w-24">Género</label>
+        <label
+          className="glassmorphism-input bg-gray-100 text-gray-700 p-2 rounded"
+          style={{ flex: 1 }}
+        >
+          {book?.genre.genre || ""}
+        </label>
+      </div>
+      {/* Sinopsis */}
+      <div className="flex items-start gap-4">
+        <label className="font-semibold text-pink-600/90 w-24">Sinopsis</label>
+        <textarea
+          className="glassmorphism-input bg-gray-100 text-gray-700 p-2 rounded resize-none"
+          style={{ flex: 1 }}
+          value={book?.resume || ""}
+          readOnly
+          rows={4}
+        />
+      </div>
     </div>
   );
-
-  const onSave = () => {
-    // Aquí puedes manejar el guardado de datos
-  };
 
   return (
     <ModalFrame
@@ -56,8 +56,8 @@ export const BookModalDetails = ({ show, onClose, book }) => {
       body={body}
       entity="Libro"
       onClose={onClose}
-      onSave={onSave}
       show={show}
+      onSave={onClose}
     />
   );
 };

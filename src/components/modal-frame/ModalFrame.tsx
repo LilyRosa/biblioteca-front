@@ -12,22 +12,25 @@ export default function ModalFrame({
   onSave,
   entity,
 }: ModalProps) {
-  const footerContent = (
-    <div>
+  const footerContent =
+    dialogMode === "view" ? (
       <Button
-        label="Cancelar"
+        label="Cerrar"
         icon="pi pi-times"
-        onClick={() => onClose()}
+        onClick={onClose}
         className="p-button-text"
       />
-      <Button
-        label="Guardar"
-        icon="pi pi-check"
-        onClick={() => onSave()}
-        autoFocus
-      />
-    </div>
-  );
+    ) : (
+      <div>
+        <Button
+          label="Cancelar"
+          icon="pi pi-times"
+          onClick={onClose}
+          className="p-button-text"
+        />
+        <Button label="Guardar" icon="pi pi-check" onClick={onSave} autoFocus />
+      </div>
+    );
 
   const headerContent = (
     <div>

@@ -25,9 +25,9 @@ import UpdateBookInputDto from "../../api/books/interface/input/update-book.inpu
 
 export const BookPanel = () => {
   const [globalFilterValue, setGlobalFilterValue] = React.useState("");
-  const [filters, setFilters] = useState(null);
+  //const [filters, setFilters] = useState(null);
   const [loading, setLoading] = useState(false);
-  const genres = ["misterio", "suspenso", "drama", "terror", "romance"];
+  // const genres = ["misterio", "suspenso", "drama", "terror", "romance"];
   const [showModal, setShowModal] = useState(false);
   const [showModalDetails, setShowModalDetails] = useState(false);
   const [typeModal, setTypeModal] = useState("create");
@@ -35,6 +35,35 @@ export const BookPanel = () => {
   const [popup, setPopup] = useState(false);
   const [popupTarget, setPopupTarget] = useState(null);
   const [books, setBooks] = useState([]);
+  const [genres, setGenres] = useState([]);
+  const [filters, setFilters] = useState(() => ({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    theme: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+    },
+    author: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+    },
+    genre: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+    },
+  }));
+
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const data = await getAllGenre();
+        // Si tu backend retorna { genres: [...] } usa setGenres(data.genres)
+        setGenres(data);
+      } catch (error) {
+        console.error("Error al cargar los géneros:", error);
+      }
+    };
+    fetchGenres();
+  }, []);
 
   useEffect(() => {
     const loadBooks = async () => {
@@ -114,23 +143,18 @@ export const BookPanel = () => {
     }
   };
 
-  const getSeverity = (status) => {
-    switch (status) {
-      case "misterio":
-        return "danger";
-
-      case "suspenso":
-        return "success";
-
-      case "drama":
-        return "info";
-
-      case "terror":
-        return "warning";
-
-      case "romance":
-        return null;
-    }
+  const severities = [
+    "danger",
+    "success",
+    "info",
+    "warning",
+    null,
+    "secondary",
+  ];
+  const getSeverity = (genre) => {
+    if (!genres || genres.length === 0) return "secondary";
+    const index = genres.findIndex((g) => g.genre === genre);
+    return severities[index % severities.length];
   };
 
   const clearFilter = () => {
@@ -140,6 +164,10 @@ export const BookPanel = () => {
     const value = e.target.value;
     const _filters = { ...filters };
 
+    if (!_filters["global"]) {
+      _filters["global"] = { value: null, matchMode: FilterMatchMode.CONTAINS };
+    }
+
     _filters["global"].value = value;
 
     setFilters(_filters);
@@ -148,25 +176,19 @@ export const BookPanel = () => {
   const initFilters = () => {
     setFilters({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      name: {
+      theme: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
-      "country.name": {
+      author: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
       },
 
-      balance: {
+      genre: {
         operator: FilterOperator.AND,
         constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
       },
-      status: {
-        operator: FilterOperator.OR,
-        constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
-      },
-      activity: { value: null, matchMode: FilterMatchMode.BETWEEN },
-      verified: { value: null, matchMode: FilterMatchMode.EQUALS },
     });
     setGlobalFilterValue("");
   };
@@ -300,11 +322,11 @@ export const BookPanel = () => {
     return <div className="px-3 pt-0 pb-3 text-center">Filter by Country</div>;
   };
 
-  const statusFilterTemplate = (options) => {
+  const genreFilterTemplate = (options) => {
     return (
       <Dropdown
         value={options.value}
-        options={genres}
+        options={genres.map((g) => g.genre)}
         onChange={(e) => options.filterCallback(e.value, options.index)}
         itemTemplate={genreItemTemplate}
         placeholder="Select One"
@@ -366,25 +388,21 @@ export const BookPanel = () => {
           <Column
             field="author"
             header="Autor"
-            filterField="country.name"
             style={{ minWidth: "12rem" }}
             body={authorBodyTemplate}
             filter
             filterPlaceholder="Filtrar por autor"
-            filterClear={filterClearTemplate}
-            filterApply={filterApplyTemplate}
-            filterFooter={filterFooterTemplate}
           />
 
           <Column
-            field="genre"
+            field="genre.genre"
             header="Género"
             showFilterMenu={true}
             filterMenuStyle={{ width: "14rem" }}
             style={{ minWidth: "12rem" }}
             body={genreBodyTemplate}
             filter
-            filterElement={statusFilterTemplate}
+            filterElement={genreFilterTemplate}
           />
           <Column
             header="Acciones"

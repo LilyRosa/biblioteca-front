@@ -13,12 +13,6 @@
   box-shadow: 0 12px 48px 0 rgba(244, 114, 182, 0.4);
 }
 
-/* .glassmorphism-btn.p-button-text {
-  color: rgba(219, 39, 119, 0.85);
-  transition: color 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 4px 12px rgba(219, 39, 119, 0.3);
-} */
-
 .glassmorphism-btn.p-button-text:hover {
   color: #db2777; /* pink-600 */
   transform: scale(1.15);
@@ -27,6 +21,27 @@
 
 .glassmorphism-btn.p-button-text {
   color: rgba(219, 39, 119, 0.85);
+  transition: color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(219, 39, 119, 0.3);
+
+  /* Nuevas propiedades para hacer el botón redondo */
+  width: 2.5rem; /* ancho fijo */
+  height: 2.5rem; /* alto fijo igual al ancho */
+  border-radius: 50% !important; /* borde redondo */
+  padding: 0; /* quitar padding para centrar icono */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.glassmorphism-btn.p-button-text-active:hover {
+  color: #ffffff; /* pink-600 */
+  transform: scale(1.15);
+  box-shadow: 0 8px 24px rgba(219, 39, 119, 0.6);
+}
+
+.glassmorphism-btn.p-button-text-active {
+  color: rgba(242, 242, 242, 0.85);
   transition: color 0.3s ease, transform 0.2s ease;
   box-shadow: 0 4px 12px rgba(219, 39, 119, 0.3);
 

@@ -28,6 +28,19 @@ export const getAllSuggestedBooksUser = async (): Promise<UserOutputDto> => {
   }
 };
 
+export const updateUserBooks = async (
+  bookIds: number[]
+): Promise<UserOutputDto> => {
+  try {
+    const response = await api.put<UserOutputDto>("/users/me/books", {
+      books: bookIds,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const toggleFavoriteBook = async (bookId: number, favorite: boolean) => {
   try {
     const response = await api.patch(`/users/me/books/${bookId}/favorite`, {

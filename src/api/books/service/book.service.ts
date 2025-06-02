@@ -23,6 +23,15 @@ export const getAllBook = async (): Promise<BookOutputDto> => {
   }
 };
 
+export const getAllExceptUserBooks = async (): Promise<BookOutputDto> => {
+  try {
+    const response = await api.get<BookOutputDto>("/books/{user}/except");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const updateBook = async (
   bookData: UpdateBookInputDto,
   id: number

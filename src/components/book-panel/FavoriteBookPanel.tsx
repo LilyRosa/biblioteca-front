@@ -79,6 +79,13 @@ export const FavoriteBookPanel = () => {
   return (
     <>
       <section className="glassmorphism-panel p-6 rounded-3xl shadow-lg max-w-5xl mx-auto">
+        <div className="flex align-items-center">
+          <div className="mb-10">
+            <span className="text-2xl font-bold text-pink-600 select-none">
+              Mis Libros Favoritos
+            </span>
+          </div>
+        </div>
         <div className="flex flex-col md:flex-row gap-6 mb-8">
           {books
             .filter((book) =>

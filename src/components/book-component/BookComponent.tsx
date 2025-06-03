@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "primereact/button";
 
 export const BookComponent = ({
-  onEdit,
+  onDownload,
   onDelete,
   onDetails,
   onFavorite,
@@ -32,15 +32,15 @@ export const BookComponent = ({
           }}
         >
           <Button
-            icon="pi pi-pencil"
+            icon="pi pi-download"
             rounded
             outlined
             severity="info"
-            aria-label="Editar"
-            onClick={onEdit}
+            aria-label="Descargar"
+            onClick={onDownload}
             size="small"
             style={{ width: "100%" }}
-            tooltip="Editar"
+            tooltip="Descargar"
           />
           <Button
             icon="pi pi-trash"

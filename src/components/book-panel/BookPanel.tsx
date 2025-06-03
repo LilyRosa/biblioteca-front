@@ -97,6 +97,31 @@ export const BookPanel = () => {
     setSelectedBook(book);
   };
 
+  const download = async (book) => {
+    try {
+      const response = await fetch(book.bookPdf);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const anchor = document.createElement("a");
+      anchor.href = blobUrl;
+      anchor.download = book.theme || "documento.pdf";
+      anchor.style.display = "none";
+      document.body.appendChild(anchor);
+
+      anchor.click();
+
+      // Limpiar después de descargar
+      setTimeout(() => {
+        window.URL.revokeObjectURL(blobUrl);
+        document.body.removeChild(anchor);
+      }, 100);
+    } catch (error) {
+      console.error("Error al descargar:", error);
+      alert("No se pudo descargar el archivo.");
+    }
+  };
+
   const handleAddBook = async () => {
     await refresh();
   };
@@ -105,12 +130,18 @@ export const BookPanel = () => {
     <>
       <section className="glassmorphism-panel p-6 rounded-3xl shadow-lg max-w-5xl mx-auto">
         <div className="flex align-items-center">
+          <div className="mb-10">
+            <span className="text-2xl font-bold text-pink-600 select-none">
+              Mis Libros
+            </span>
+          </div>
           <div className="flex gap-4 align-items-center ml-auto">
             <Button
               type="button"
               label="Agregar Libro"
               outlined
               onClick={() => showCreate()}
+              className="py-1 h-10 text-sm border-4 border-pink-600"
             />
           </div>
         </div>
@@ -132,7 +163,7 @@ export const BookPanel = () => {
                 onDelete={(e) => showPopup(e, book)}
                 onDetails={() => showDetails(book)}
                 onFavorite={() => handleFavoriteToggle(book)}
-                onEdit={() => showEdit(book)}
+                onDownload={() => download(book)}
               />
             ))}
         </div>

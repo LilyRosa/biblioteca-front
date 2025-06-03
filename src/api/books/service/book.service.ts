@@ -7,7 +7,23 @@ export const addBook = async (
   bookData: CreateBookInputDto
 ): Promise<BookOutputDto> => {
   try {
-    const response = await api.post<BookOutputDto>("/books", bookData);
+    const formData = new FormData();
+
+    // Agregar campos de texto
+    formData.append("theme", bookData.theme);
+    formData.append("author", bookData.author);
+    formData.append("resume", bookData.resume);
+    formData.append("genre", bookData.genre.toString());
+
+    // Agregar archivos
+    formData.append("poster", bookData.poster);
+    formData.append("bookPdf", bookData.bookPdf);
+
+    const response = await api.post<BookOutputDto>("/books", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   } catch (error) {
     throw error;
@@ -37,7 +53,23 @@ export const updateBook = async (
   id: number
 ): Promise<BookOutputDto> => {
   try {
-    const response = await api.put<BookOutputDto>(`/books/${id}`, bookData);
+    const formData = new FormData();
+
+    // Agregar campos de texto si existen
+    if (bookData.theme) formData.append("theme", bookData.theme);
+    if (bookData.author) formData.append("author", bookData.author);
+    if (bookData.resume) formData.append("resume", bookData.resume);
+    if (bookData.genre) formData.append("genre", bookData.genre.toString());
+
+    // Agregar archivos si existen
+    if (bookData.poster) formData.append("poster", bookData.poster);
+    if (bookData.bookPdf) formData.append("bookPdf", bookData.bookPdf);
+
+    const response = await api.put<BookOutputDto>(`/books/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   } catch (error) {
     throw error;

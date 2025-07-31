@@ -16,9 +16,9 @@ export const AddBookModal = ({
   dialogMode,
   book,
   onAddBook,
+  userBooks,
 }) => {
   const [books, setBooks] = useState([]);
-  const [userBooks, setUserBooks] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -31,31 +31,21 @@ export const AddBookModal = ({
     }
   }, [show]);
 
-  useEffect(() => {
-    if (show) {
-      getAllBooksUser()
-        .then((userData) => setUserBooks(userData.books || []))
-        .catch(console.error);
-    }
-  }, [show]);
-
   const handleAddBook = async (book) => {
     try {
       // Verificar si el libro ya está en la lista
-      if (userBooks.find((b) => b.id === book.id_book)) {
-        alert("Este libro ya está en tu lista.");
-        return;
-      }
-
       // Crear nueva lista con el libro agregado
       const newBookIds = [...userBooks.map((b) => b.id), book.id_book];
 
       // Actualizar en backend
       const updatedUser = await updateUserBooks(newBookIds);
-
+      console.log(updatedUser);
       // Actualizar estado local
-      setUserBooks(updatedUser.books);
+      const booksData = await getAllExceptUserBooks();
+
+      setBooks(booksData);
       onAddBook();
+      onClose();
 
       alert(`Libro "${book.theme}" añadido a tu lista.`);
     } catch (error) {

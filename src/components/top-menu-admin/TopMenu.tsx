@@ -1,7 +1,11 @@
 import React from "react";
 import Link from "next/link";
 import { Button } from "primereact/button";
-import { IoBookOutline, IoPricetagOutline } from "react-icons/io5";
+import {
+  IoBookOutline,
+  IoLogOutOutline,
+  IoPricetagOutline,
+} from "react-icons/io5";
 import "./styles.css";
 import { usePathname } from "next/navigation";
 
@@ -23,6 +27,7 @@ export const TopMenu = () => {
             }`}
             aria-label="Agregar libro"
             tooltip="Libros"
+            tooltipOptions={{ position: "bottom" }}
           />
         </Link>
         <Link href="/admin/add-genre" passHref>
@@ -35,6 +40,16 @@ export const TopMenu = () => {
             }`}
             aria-label="Agregar género"
             tooltip="Géneros"
+            tooltipOptions={{ position: "bottom" }}
+          />
+        </Link>
+        <Link href="/auth/login" passHref>
+          <Button
+            icon={<IoLogOutOutline className="w-6 h-6" />}
+            className="p-button-rounded logout"
+            aria-label="Cerrar Sesión"
+            tooltip="Cerrar Sesión"
+            tooltipOptions={{ position: "bottom" }}
           />
         </Link>
       </nav>

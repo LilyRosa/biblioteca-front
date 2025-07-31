@@ -174,6 +174,7 @@ export const BookPanel = () => {
           onClose={() => setShowModal(false)}
           show={showModal}
           book={selectedBook}
+          userBooks={books}
         />
 
         <BookModalDetails

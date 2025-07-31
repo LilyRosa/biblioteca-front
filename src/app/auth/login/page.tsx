@@ -16,9 +16,11 @@ export default function Login() {
     try {
       const data = await login({ username: user, password: password });
       console.log(data);
-      console.log(decodeJWT(data.accessToken));
+      const role = decodeJWT(data.accessToken)!.role;
+
       setToken(data.accessToken);
-      window.location.href = "/main-frame";
+      if (role === "admin") window.location.href = "/admin/main-frame";
+      else window.location.href = "/main-frame";
     } catch (error) {
       window.alert(error);
     }

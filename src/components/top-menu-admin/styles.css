@@ -60,3 +60,19 @@
   align-items: center;
   justify-content: center;
 }
+
+.logout {
+  background-color: rgba(242, 242, 242, 0.85);
+  color: #db2777;
+  box-shadow: 0 4px 12px rgba(219, 39, 119, 0.3);
+  width: 2.5rem; /* ancho fijo */
+  height: 2.5rem; /* alto fijo igual al ancho */
+  border-radius: 50% !important; /* borde redondo */
+  padding: 0; /* quitar padding para centrar icono */
+}
+
+.logout:hover {
+  color: #db2777; /* pink-600 */
+  transform: scale(1.15);
+  box-shadow: 0 8px 24px rgba(219, 39, 119, 0.6);
+}

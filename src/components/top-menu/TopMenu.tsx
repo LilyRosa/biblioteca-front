@@ -3,7 +3,12 @@
 import React from "react";
 import Link from "next/link";
 import { Button } from "primereact/button";
-import { IoBookOutline, IoBulbOutline, IoHeartOutline } from "react-icons/io5";
+import {
+  IoBookOutline,
+  IoBulbOutline,
+  IoHeartOutline,
+  IoLogOutOutline,
+} from "react-icons/io5";
 import "./styles.css";
 
 import { usePathname } from "next/navigation";
@@ -24,6 +29,7 @@ export const TopMenu = () => {
             }`}
             aria-label="Agregar libro"
             tooltip="Libros"
+            tooltipOptions={{ position: "bottom" }}
           />
         </Link>
         <Link href="/favorite" passHref>
@@ -34,6 +40,7 @@ export const TopMenu = () => {
             }`}
             aria-label="Favoritos"
             tooltip="Favoritos"
+            tooltipOptions={{ position: "bottom" }}
           />
         </Link>
         <Link href="/suggestion" passHref>
@@ -44,6 +51,17 @@ export const TopMenu = () => {
             }`}
             aria-label="Sugerencias"
             tooltip="Sugerencias"
+            tooltipOptions={{ position: "bottom" }}
+          />
+        </Link>
+
+        <Link href="/auth/login" passHref>
+          <Button
+            icon={<IoLogOutOutline className="w-6 h-6" />}
+            className="p-button-rounded logout"
+            aria-label="Cerrar Sesión"
+            tooltip="Cerrar Sesión"
+            tooltipOptions={{ position: "bottom" }}
           />
         </Link>
       </nav>

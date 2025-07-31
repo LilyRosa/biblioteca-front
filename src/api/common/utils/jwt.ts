@@ -3,6 +3,7 @@
 type JWTClaims = {
   exp?: number;
   iat?: number;
+  role?: string;
   [key: string]: any;
 };
 
